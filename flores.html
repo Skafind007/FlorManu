@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ramo para Manuela</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            background: radial-gradient(circle at top, #f3e5f5, #ba68c8);
+            font-family: 'Segoe UI', sans-serif;
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        h1 {
+            position: absolute;
+            top: 5%;
+            width: 100%;
+            text-align: center;
+            font-size: 6vw;
+            color: #ffeb3b;
+            animation: fadeIn 3s ease-in-out;
+            z-index: 2;
+        }
+
+        h2 {
+            position: absolute;
+            bottom: 10%;
+            width: 100%;
+            text-align: center;
+            font-size: 5vw;
+            color: white;
+            animation: fadeInUp 4s ease-in-out;
+            z-index: 2;
+        }
+
+        h3 {
+            position: absolute;
+            bottom: 2%;
+            width: 100%;
+            text-align: center;
+            font-size: 4vw;
+            color: #ffffff;
+            animation: fadeInUp 5s ease-in-out;
+            z-index: 2;
+        }
+
+        canvas {
+            display: block;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <h1>Feliz Diaaa Manuuuu</h1>
+    <h2>Eres mi flor favorita, mi alegría  y mi motivacion, te mereces lo mejor.</h2>
+    
+    <canvas id="florCanvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById("florCanvas");
+        const ctx = canvas.getContext("2d");
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        let angle = 0;
+        let heartAngle = 0;
+
+        function drawFlor(x, y, petalRadius, stemLength, color = '#ffeb3b') {
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(x, y + stemLength);
+            ctx.strokeStyle = '#4caf50';
+            ctx.lineWidth = 10;
+            ctx.stroke();
+
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.rotate(angle);
+            const petalCount = 8;
+            for (let i = 0; i < petalCount; i++) {
+                ctx.beginPath();
+                ctx.rotate((2 * Math.PI) / petalCount);
+                ctx.moveTo(0, 0);
+                ctx.bezierCurveTo(petalRadius / 2, -petalRadius / 2, petalRadius, petalRadius / 2, 0, petalRadius);
+                ctx.bezierCurveTo(-petalRadius, petalRadius / 2, -petalRadius / 2, -petalRadius / 2, 0, 0);
+                ctx.fillStyle = color;
+                ctx.fill();
+            }
+            ctx.restore();
+
+            ctx.beginPath();
+            ctx.arc(x, y, petalRadius / 3, 0, 2 * Math.PI);
+            ctx.fillStyle = '#fdd835';
+            ctx.fill();
+        }
+
+        function drawHeart(x, y, size, color) {
+            ctx.save();
+            ctx.beginPath();
+            ctx.translate(x, y);
+            ctx.moveTo(0, 0);
+            ctx.bezierCurveTo(0, -size / 2, -size, -size / 2, -size, 0);
+            ctx.bezierCurveTo(-size, size / 1.5, 0, size, 0, size * 1.5);
+            ctx.bezierCurveTo(0, size, size, size / 1.5, size, 0);
+            ctx.bezierCurveTo(size, -size / 2, 0, -size / 2, 0, 0);
+            ctx.closePath();
+            ctx.fillStyle = color;
+            ctx.fill();
+            ctx.restore();
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            angle += 0.01;
+            heartAngle += 0.02;
+
+            const baseX = canvas.width / 2;
+            const baseY = canvas.height / 2;
+            const radius = Math.min(canvas.width, canvas.height) * 0.08;
+            const stem = canvas.height * 0.2;
+
+            const bouquet = [
+                [-120, -80], [-60, -120], [0, -150], [60, -120], [120, -80],
+                [-90, 0], [-30, -30], [30, -30], [90, 0],
+                [-60, 80], [0, 100], [60, 80]
+            ];
+
+            bouquet.forEach((offset, i) => {
+                const petalColor = i % 2 === 0 ? '#fff176' : '#ffeb3b';
+                drawFlor(baseX + offset[0], baseY + offset[1], radius * 0.8, stem, petalColor);
+            });
+
+            for (let i = 0; i < 30; i++) {
+                const x = (Math.sin(heartAngle + i) + 1) * canvas.width / 2 + Math.random() * 40 - 20;
+                const y = (Math.cos(heartAngle * 0.5 + i) + 1) * canvas.height / 2;
+                drawHeart(x, y, 10 + Math.random() * 15, 'rgba(255, 105, 180, 0.5)');
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+    </script>
+</body>
+</html>
